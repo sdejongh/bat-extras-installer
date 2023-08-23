@@ -51,9 +51,24 @@ function symlink_batcat() {
 }
 
 
+function install_arch_dependencies() {
+	
+	dependencies="ripgrep entr"
+	
+        for package in $dependencies; do
+		if [[ ! $(pacman -Ql $package 2> /dev/null ) ]]; then
+                        echo "    -> Installing $package..."
+                        pacman -Sy $package --noconfirm &> /dev/null
+                        echo "       ... Done!"
+                else
+                        echo "    -> $package already installed!"
+                fi
+        done
+}
+
 function install_deb_dependencies() {
 
-	dependencies="git shfmt"
+	dependencies="git shfmt ripgrep entr delta"
 
 	echo "    -> Refeshing APT cache..."
 	apt-get update &> /dev/null
@@ -82,7 +97,7 @@ function install_rocky_dependencies () {
         for package in $dependencies; do
                 if [[ ! $(rpm -qa | grep -i $package 2> /dev/null ) ]]; then
                         echo "    -> Installing $package..."
-                        dnf instamm -yq $package &> /dev/null
+                        dnf install -yq $package &> /dev/null
                         echo "       ... Done!"
                 else
                         echo "    -> $package already installed!"
